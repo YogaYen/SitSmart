@@ -1,0 +1,26 @@
+{
+  "name": "sitsmart",
+  "version": "1.0.0",
+  "description": "SitSmart - AI Ergonomics Live Platform (Sit Smart, Work Better)",
+  "scripts": {
+    "start": "node -e \"const { spawn } = require('child_process'); spawn('npm', ['--prefix', 'server', 'run', 'dev'], { stdio: 'inherit', shell: true }); spawn('npm', ['--prefix', 'client', 'run', 'dev'], { stdio: 'inherit', shell: true });\"",
+    "dev": "npm start",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "build": "npm --prefix client install && npm --prefix client run build && npm --prefix server install",
+    "build:client": "npm --prefix client run build",
+    "serve": "npm --prefix server start",
+    "prod": "npm run build && npm run serve",
+    "test:server": "npm --prefix server test"
+  },
+  "keywords": [
+    "ergonomics",
+    "mediapipe",
+    "posture",
+    "ai",
+    "wellness",
+    "sdg3"
+  ],
+  "author": "SitSmart Team",
+  "license": "MIT"
+}

@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # SitSmart Frontend Client
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: sitsmart-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - sitsmart-network
+
+  # SitSmart Backend API
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: sitsmart-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/sitsmart
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - backend-data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://localhost:5000/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - sitsmart-network
+
+  # MongoDB Database Service
+  mongodb:
+    image: mongo:6.0
+    container_name: sitsmart-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - sitsmart-network
+
+networks:
+  sitsmart-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
+  backend-data:
+    driver: local
