@@ -1,0 +1,237 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #0b0f19;
+    color: #f1f5f9;
+  }
+}
+
+/* Custom Glassmorphism Styles */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-glow {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  box-shadow: 0 0 25px -5px rgba(14, 165, 233, 0.15);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Anime Stretch Character Animation Keyframes */
+@keyframes anime-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes anime-head-tilt {
+  0%, 100% { transform: rotate(10deg); }
+  50% { transform: rotate(22deg); }
+}
+
+@keyframes anime-shoulder-pinch {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.07) translateY(-3px); }
+}
+
+@keyframes anime-blink {
+  0%, 88%, 93%, 100% { transform: scaleY(1); }
+  90% { transform: scaleY(0.08); }
+}
+
+@keyframes anime-twist {
+  0%, 100% { transform: rotate(-7deg) translateX(-2px); }
+  50% { transform: rotate(7deg) translateX(2px); }
+}
+
+@keyframes anime-wrist-pull {
+  0%, 100% { transform: translateX(0) scale(1); }
+  50% { transform: translateX(-4px) scale(0.97); }
+}
+
+@keyframes anime-chest-breathe {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.08) translateY(-4px); }
+}
+
+@keyframes anime-sparkle {
+  0% { opacity: 0; transform: scale(0.6) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+  100% { opacity: 0; transform: scale(0.6) rotate(360deg); }
+}
+
+.animate-anime-bob {
+  animation: anime-bob 3s ease-in-out infinite;
+}
+.animate-anime-tilt {
+  transform-origin: 50% 70%;
+  animation: anime-head-tilt 3.5s ease-in-out infinite;
+}
+.animate-anime-pinch {
+  transform-origin: 50% 60%;
+  animation: anime-shoulder-pinch 3s ease-in-out infinite;
+}
+.animate-anime-blink {
+  transform-origin: 50% 50%;
+  animation: anime-blink 4s ease-in-out infinite;
+}
+.animate-anime-twist {
+  transform-origin: 50% 80%;
+  animation: anime-twist 3.5s ease-in-out infinite;
+}
+.animate-anime-wrist {
+  transform-origin: 60% 50%;
+  animation: anime-wrist-pull 2.5s ease-in-out infinite;
+}
+.animate-anime-breathe {
+  transform-origin: 50% 65%;
+  animation: anime-chest-breathe 4s ease-in-out infinite;
+}
+.animate-anime-sparkle {
+  animation: anime-sparkle 2.2s ease-in-out infinite;
+}
+
+/* Dedicated Cartoon Exercise Keyframes */
+@keyframes cartoon-head-tilt-active {
+  0% { transform: rotate(0deg); }
+  35% { transform: rotate(24deg); }
+  65% { transform: rotate(26deg); }
+  90%, 100% { transform: rotate(0deg); }
+}
+
+@keyframes cartoon-head-tilt-idle {
+  0%, 100% { transform: rotate(8deg); }
+  50% { transform: rotate(16deg); }
+}
+
+@keyframes cartoon-arm-neck-active {
+  0% { transform: translateY(0) rotate(0deg); }
+  35%, 65% { transform: translateY(3px) rotate(4deg); }
+  90%, 100% { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes cartoon-scapular-chest {
+  0%, 100% { transform: scale(1) translateY(0); }
+  40%, 70% { transform: scaleX(1.1) scaleY(1.05) translateY(-3px); }
+}
+
+@keyframes cartoon-scapular-left-arm {
+  0%, 100% { transform: translate(0, 0); }
+  40%, 70% { transform: translate(-6px, 2px) rotate(6deg); }
+}
+
+@keyframes cartoon-scapular-right-arm {
+  0%, 100% { transform: translate(0, 0); }
+  40%, 70% { transform: translate(6px, 2px) rotate(-6deg); }
+}
+
+@keyframes cartoon-gaze-drift {
+  0%, 100% { transform: translate(0, 0); }
+  30%, 70% { transform: translate(6px, -3px); }
+}
+
+@keyframes cartoon-torso-twist-active {
+  0% { transform: rotate(-12deg) scale(0.98); }
+  50% { transform: rotate(12deg) scale(1.02); }
+  100% { transform: rotate(-12deg) scale(0.98); }
+}
+
+@keyframes cartoon-torso-twist-idle {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+
+@keyframes cartoon-wrist-flex-active {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  40%, 70% { transform: translateX(-6px) rotate(-10deg); }
+}
+
+@keyframes cartoon-chest-breathe-active {
+  0%, 100% { transform: scale(1) translateY(0); }
+  45%, 65% { transform: scale(1.12) translateY(-5px); }
+}
+
+@keyframes cartoon-float-pulse {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-4px) scale(1.02); }
+}
+
+@keyframes cartoon-ripple-expand {
+  0% { opacity: 0.8; transform: scale(0.85); }
+  50% { opacity: 0.3; transform: scale(1.15); }
+  100% { opacity: 0.8; transform: scale(0.85); }
+}
+
+.animate-cartoon-tilt-active {
+  transform-origin: 50% 75%;
+  animation: cartoon-head-tilt-active 3s ease-in-out infinite;
+}
+.animate-cartoon-tilt-idle {
+  transform-origin: 50% 75%;
+  animation: cartoon-head-tilt-idle 4s ease-in-out infinite;
+}
+.animate-cartoon-arm-neck {
+  transform-origin: 75% 75%;
+  animation: cartoon-arm-neck-active 3s ease-in-out infinite;
+}
+.animate-cartoon-scapular-chest {
+  transform-origin: 50% 60%;
+  animation: cartoon-scapular-chest 2.8s ease-in-out infinite;
+}
+.animate-cartoon-scapular-left {
+  transform-origin: 40% 70%;
+  animation: cartoon-scapular-left-arm 2.8s ease-in-out infinite;
+}
+.animate-cartoon-scapular-right {
+  transform-origin: 60% 70%;
+  animation: cartoon-scapular-right-arm 2.8s ease-in-out infinite;
+}
+.animate-cartoon-gaze {
+  animation: cartoon-gaze-drift 3.5s ease-in-out infinite;
+}
+.animate-cartoon-twist-active {
+  transform-origin: 50% 85%;
+  animation: cartoon-torso-twist-active 3s ease-in-out infinite;
+}
+.animate-cartoon-twist-idle {
+  transform-origin: 50% 85%;
+  animation: cartoon-torso-twist-idle 4.5s ease-in-out infinite;
+}
+.animate-cartoon-wrist-active {
+  transform-origin: 70% 50%;
+  animation: cartoon-wrist-flex-active 2.4s ease-in-out infinite;
+}
+.animate-cartoon-chest-active {
+  transform-origin: 50% 65%;
+  animation: cartoon-chest-breathe-active 3.5s ease-in-out infinite;
+}
+.animate-cartoon-float {
+  animation: cartoon-float-pulse 3s ease-in-out infinite;
+}
+.animate-cartoon-ripple {
+  animation: cartoon-ripple-expand 2.5s ease-in-out infinite;
+}
+

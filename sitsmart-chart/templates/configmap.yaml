@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+  labels:
+    app.kubernetes.io/name: sitsmart
+    app.kubernetes.io/instance: {{ .Release.Name }}
+data:
+  NODE_ENV: {{ .Values.backend.env.nodeEnv | quote }}
+  PORT: {{ .Values.backend.env.port | quote }}
+  MONGODB_URI: "mongodb://{{ .Release.Name }}-mongodb:27017/sitsmart"

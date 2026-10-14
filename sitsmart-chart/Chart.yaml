@@ -1,0 +1,15 @@
+apiVersion: v2
+name: sitsmart
+description: Helm chart for SitSmart - AI Ergonomics Live Platform (SDG 3)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - ergonomics
+  - mediapipe
+  - sdg3
+  - ai
+  - workplace-wellness
+maintainers:
+  - name: SitSmart DevOps Team
+    email: devops@sitsmart.org

@@ -1,0 +1,94 @@
+# Default values for sitsmart.
+replicaCount: 2
+
+# Frontend Configuration
+frontend:
+  image:
+    repository: sitsmart/frontend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 80
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# Backend Configuration
+backend:
+  image:
+    repository: sitsmart/backend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  service:
+    type: ClusterIP
+    port: 5000
+  env:
+    port: 5000
+    nodeEnv: "production"
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+# MongoDB Embedded Service
+mongodb:
+  enabled: true
+  image:
+    repository: mongo
+    tag: "6.0"
+  persistence:
+    enabled: true
+    storageClass: "standard"
+    accessMode: ReadWriteOnce
+    size: 10Gi
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+
+# Ingress Configuration (NGINX Ingress Controller)
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "20m"
+  hosts:
+    - host: sitsmart.local
+      paths:
+        - path: /
+          pathType: Prefix
+          backend: frontend
+        - path: /api
+          pathType: Prefix
+          backend: backend
+        - path: /healthz
+          pathType: Prefix
+          backend: backend
+        - path: /metrics
+          pathType: Prefix
+          backend: backend
+  tls:
+    - secretName: sitsmart-tls
+      hosts:
+        - sitsmart.local
+
+# Horizontal Pod Autoscaling (HPA)
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 75
+  targetMemoryUtilizationPercentage: 80

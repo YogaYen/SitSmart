@@ -1,0 +1,172 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "title": "⚡ Operations Dashboard (Ops)",
+      "type": "row"
+    },
+    {
+      "id": 2,
+      "title": "API Request Throughput",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 1 },
+      "targets": [
+        {
+          "expr": "rate(sitsmart_http_requests_total[1m])",
+          "legendFormat": "Requests / sec"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Average API Latency (ms)",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 1 },
+      "targets": [
+        {
+          "expr": "sitsmart_http_request_duration_ms_avg",
+          "legendFormat": "Avg Latency (ms)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 200 },
+              { "color": "red", "value": 500 }
+            ]
+          },
+          "unit": "ms"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "HTTP Status Codes (Error Rate)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 1 },
+      "targets": [
+        {
+          "expr": "rate(sitsmart_http_status_codes[1m])",
+          "legendFormat": "{{code}}"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 },
+      "id": 5,
+      "title": "📱 Application & Pose Tracking Telemetry (App)",
+      "type": "row"
+    },
+    {
+      "id": 6,
+      "title": "Active Client Workstation Connections",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 10 },
+      "targets": [
+        {
+          "expr": "sitsmart_active_connections",
+          "legendFormat": "Active Workstations"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Service Process Uptime",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 10 },
+      "targets": [
+        {
+          "expr": "sitsmart_app_uptime_seconds",
+          "legendFormat": "Uptime"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "title": "Slouch vs. Optimal Ratio",
+      "type": "piechart",
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 10 },
+      "targets": [
+        {
+          "expr": "sitsmart_posture_status_ratio",
+          "legendFormat": "{{status}}"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 16 },
+      "id": 9,
+      "title": "🌱 UN SDG 3 & Workplace Wellness Impact (Business)",
+      "type": "row"
+    },
+    {
+      "id": 10,
+      "title": "Micro-Breaks & Stretches Completed",
+      "type": "bargauge",
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 17 },
+      "targets": [
+        {
+          "expr": "sitsmart_microbreaks_completed_total",
+          "legendFormat": "Breaks Completed"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Organizational Posture Health Score Benchmark",
+      "type": "gauge",
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 17 },
+      "targets": [
+        {
+          "expr": "sitsmart_org_avg_posture_score",
+          "legendFormat": "Average Health Score"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 60 },
+              { "color": "green", "value": 82 }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["sitsmart", "ergonomics", "sdg3", "monitoring"],
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "title": "SitSmart – Ergonomics Platform Observability",
+  "uid": "sitsmart-observability",
+  "version": 1
+}

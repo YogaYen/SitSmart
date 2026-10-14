@@ -1,0 +1,57 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  labels:
+    app.kubernetes.io/name: sitsmart
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  annotations:
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Release.Name }}-backend
+                port:
+                  number: {{ $.Values.backend.service.port }}
+          - path: /healthz
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Release.Name }}-backend
+                port:
+                  number: {{ $.Values.backend.service.port }}
+          - path: /metrics
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Release.Name }}-backend
+                port:
+                  number: {{ $.Values.backend.service.port }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $.Release.Name }}-frontend
+                port:
+                  number: {{ $.Values.frontend.service.port }}
+    {{- end }}
+{{- end }}
