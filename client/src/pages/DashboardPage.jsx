@@ -78,16 +78,20 @@ export default function DashboardPage({
     return 'all';
   });
 
+  const [isWindowFocused, setIsWindowFocused] = useState(typeof document !== 'undefined' ? document.hasFocus() : true);
+  const [yellowAlertBanner, setYellowAlertBanner] = useState(null);
+
   const slouchTimerRef = useRef(null);
-  const lowScoreTimerRef = useRef(null);
   const hadLowScoreAlertRef = useRef(false);
+  const lastYellowTriggerTimeRef = useRef(0);
+  const wasInYellowZoneRef = useRef(false);
 
   // Synchronize audio mute state
   useEffect(() => {
     soundManager.setMuted(isMuted);
   }, [isMuted]);
 
-  // Track tab visibility and update tab title when user works on another tab
+  // Track tab visibility and window focus (detects when user is busy working on another app/tab)
   useEffect(() => {
     const handleVisChange = () => {
       const hidden = document.hidden;
@@ -96,8 +100,17 @@ export default function DashboardPage({
         document.title = "SitSmart – AI Ergonomics Live Platform";
       }
     };
+    const handleFocus = () => setIsWindowFocused(true);
+    const handleBlur = () => setIsWindowFocused(false);
+
     document.addEventListener('visibilitychange', handleVisChange);
-    return () => document.removeEventListener('visibilitychange', handleVisChange);
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('blur', handleBlur);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisChange);
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('blur', handleBlur);
+    };
   }, []);
 
   // Smooth scroll to targeted dashboard section & sync active section tab if hash exists on mount or change
@@ -169,47 +182,94 @@ export default function DashboardPage({
     };
   }, [analysis.metrics?.isSlouching, isSessionActive]);
 
-  // Low Posture Score (< 75% or Slouching) Pop Alert for Background Tabs & Active Work
-  const isLowPosture = currentScore < 75 || analysis.metrics?.isSlouching;
+  // Dynamic voice instructions tailored to which body landmark drifted into the yellow score
+  const getYellowInstruction = (score, metrics) => {
+    if (metrics?.eyeScorePercent < 80) {
+      return {
+        speech: `Attention. Score ${score} percent in yellow. Please lift your chin to eye level, sit tall, and roll your shoulders back.`,
+        visual: `Score ${score}% (Yellow Drift): Lift your chin to eye level, sit tall, and roll your shoulders back.`
+      };
+    }
+    if (metrics?.torsoScorePercent < 80 || metrics?.isSlouching) {
+      return {
+        speech: `Attention. Score ${score} percent in yellow. Slouch detected. Pull your spine upright and engage your core.`,
+        visual: `Score ${score}% (Yellow Drift): Slouch detected! Pull your spine upright, engage your core, and sit on the front of your chair.`
+      };
+    }
+    if (metrics?.armScorePercent < 80) {
+      return {
+        speech: `Attention. Score ${score} percent in yellow. Relax your elbows and position forearms parallel to your desk.`,
+        visual: `Score ${score}% (Yellow Drift): Relax your elbows and position forearms parallel to your desk.`
+      };
+    }
+    return {
+      speech: `Attention. Your posture score is ${score} percent in yellow. Sit up straight, lift your chin, and align your spine.`,
+      visual: `Score ${score}% (Yellow Drift): Sit up straight, lift your chin, and align your spine.`
+    };
+  };
 
+  // Immediate Alert for Yellow Score (< 82%) while busy working on another tab/screen:
+  // 1. Immediately plays pop sound two times ("pop... pop!")
+  // 2. Speaks actionable audio instructions so user listens carefully without needing to see the screen
+  // 3. Simultaneously displays the message banner on-screen, updates browser tab title, and sends desktop notification
   useEffect(() => {
-    if (isLowPosture && isSessionActive) {
-      lowScoreTimerRef.current = setInterval(() => {
-        setSlouchSeconds(prev => prev); // keep reactive
-        // Play pop sound at 2s, then repeat every 4 seconds while posture stays low
-        hadLowScoreAlertRef.current = true;
-        soundManager.playPopSound();
+    if (!isSessionActive) {
+      setYellowAlertBanner(null);
+      wasInYellowZoneRef.current = false;
+      return;
+    }
 
-        if (document.hidden) {
-          document.title = `⚠️ (${currentScore}%) Sit Up! - SitSmart`;
-          soundManager.sendDesktopNotification(
-            `⚠️ Low Posture Score: ${currentScore}%`,
-            "Posture dropped low! Sit up straight, lift your chin, and align your spine."
-          );
-        }
-      }, 3500);
-    } else {
-      if (lowScoreTimerRef.current) {
-        clearInterval(lowScoreTimerRef.current);
+    // Yellow zone: score < 82 (e.g. 60-81% or slouching)
+    const isYellow = currentScore < 82 || analysis.metrics?.isSlouching;
+
+    if (isYellow) {
+      const now = Date.now();
+      const justEnteredYellow = !wasInYellowZoneRef.current;
+      const timeSinceLastAlert = now - lastYellowTriggerTimeRef.current;
+
+      // Trigger IMMEDIATELY when score drops into yellow, and gently repeat after 13 seconds if posture stays yellow
+      if (justEnteredYellow || timeSinceLastAlert > 13000) {
+        lastYellowTriggerTimeRef.current = now;
+        wasInYellowZoneRef.current = true;
+        hadLowScoreAlertRef.current = true;
+
+        const { speech, visual } = getYellowInstruction(currentScore, analysis.metrics);
+
+        // 1. Immediately play pop sound two times, then speak audio instructions
+        soundManager.playYellowPostureAlert(speech);
+
+        // 2. Display visual message banner on screen with replay option
+        setYellowAlertBanner({
+          score: currentScore,
+          message: visual,
+          speechText: speech,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        });
+
+        // 3. Update browser tab title
+        document.title = `⚠️ (${currentScore}%) Yellow Drift: Sit Up! - SitSmart`;
+
+        // 4. Send desktop system notification (for background tabs)
+        soundManager.sendDesktopNotification(
+          `⚠️ Yellow Posture Drift: ${currentScore}%`,
+          visual
+        );
       }
-      // If user corrected their posture after an alert, celebrate with success chime!
-      if (hadLowScoreAlertRef.current && currentScore >= 80 && !analysis.metrics?.isSlouching) {
+    } else {
+      // Posture corrected back to Green (>= 82%)!
+      if (wasInYellowZoneRef.current && currentScore >= 82 && !analysis.metrics?.isSlouching) {
         soundManager.playSuccessChime();
-        if (document.hidden) {
-          document.title = `✅ (${currentScore}%) Aligned - SitSmart`;
-          soundManager.sendDesktopNotification(
-            `✅ Posture Corrected (${currentScore}%)`,
-            "Excellent! Your spine is back in healthy alignment."
-          );
-        }
+        setYellowAlertBanner(null);
+        document.title = `✅ (${currentScore}%) Aligned - SitSmart`;
+        soundManager.sendDesktopNotification(
+          `✅ Posture Corrected (${currentScore}%)`,
+          "Great job! Your spine and neck are back in healthy alignment."
+        );
+        wasInYellowZoneRef.current = false;
         hadLowScoreAlertRef.current = false;
       }
     }
-
-    return () => {
-      if (lowScoreTimerRef.current) clearInterval(lowScoreTimerRef.current);
-    };
-  }, [isLowPosture, isSessionActive, currentScore]);
+  }, [currentScore, analysis.metrics, isTabHidden, isWindowFocused, isSessionActive]);
 
   const handleAnalysisChange = (evaluated) => {
     setAnalysis(evaluated);
@@ -291,6 +351,52 @@ export default function DashboardPage({
           <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-slate-900/95 border border-emerald-500/50 text-emerald-300 text-xs font-semibold shadow-2xl shadow-emerald-500/10 backdrop-blur-md">
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>{saveNotice}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Yellow Posture 2x Pop & Spoken Audio Instruction Toast */}
+      {yellowAlertBanner && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-full max-w-xl px-4 animate-in slide-in-from-top-4 duration-300">
+          <div className="p-4 rounded-2xl bg-slate-900/95 border-2 border-amber-500/80 shadow-2xl shadow-amber-500/25 backdrop-blur-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-amber-100">
+            <div className="flex items-start gap-3">
+              <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 shrink-0 mt-0.5">
+                <Volume2 className="w-5 h-5 animate-pulse" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black uppercase tracking-wider text-amber-400">
+                    ⚠️ Yellow Posture Drift ({yellowAlertBanner.score}%)
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-[10px] font-bold text-amber-300 animate-pulse">
+                    🔊 Audio Voice Alert Spoken
+                  </span>
+                </div>
+                <p className="text-xs text-slate-200 mt-1 font-medium leading-relaxed">
+                  {yellowAlertBanner.message}
+                </p>
+                <p className="text-[11px] text-amber-300/80 mt-0.5 italic">
+                  "Pop... pop" sounded immediately &bull; Listen carefully: sit tall, lift chin, and align spine.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => {
+                  soundManager.playYellowPostureAlert(yellowAlertBanner.speechText);
+                }}
+                className="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 text-xs font-bold border border-amber-500/40 flex items-center gap-1 transition-colors cursor-pointer"
+                title="Replay 2x Pop and spoken voice instruction"
+              >
+                <Volume2 className="w-3.5 h-3.5" /> Replay
+              </button>
+              <button
+                onClick={() => setYellowAlertBanner(null)}
+                className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Dismiss
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -476,31 +582,41 @@ export default function DashboardPage({
         {/* ================================================================= */}
         {activeSection === 'workplace' && (
           <div className="space-y-8 animate-in fade-in duration-300">
-            {/* Background Tab & PiP Helper Banner */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-brand-950/60 via-slate-900/80 to-indigo-950/60 border border-brand-500/25 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xl">
+            {/* Background Tab & PiP Helper Banner with 2x Pop & Spoken Audio Instructions */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/40 via-slate-900/90 to-indigo-950/40 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xl">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-brand-500/20 text-brand-300 flex-shrink-0">
-                  <Sparkles className="w-5 h-5 text-brand-400" />
+                <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 flex-shrink-0">
+                  <Volume2 className="w-5 h-5 animate-pulse" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                    Multi-Tab Ergonomics &amp; Background Pop Alerts
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono font-semibold">
+                    Multi-Tab Ergonomics &amp; Immediate Spoken Audio Alerts
+                    <span className="px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-mono font-semibold">
                       Active
                     </span>
                   </h4>
                   <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
-                    Work on any other website or application freely: SitSmart plays an audible <strong>double-pop alert</strong> whenever your score drops below 75%, while <strong>Floating PiP</strong> keeps your camera + skeleton lines on top of all windows.
+                    Busy on another window or tab? If your score drifts into <strong>yellow (&lt; 82%)</strong>, SitSmart immediately plays a <strong>double-pop tone (&quot;pop... pop&quot;)</strong> followed by <strong>spoken audio instructions</strong> so you hear what to do without needing to look at the screen.
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 <button
-                  onClick={() => soundManager.playPopSound()}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5"
-                  title="Test the pop sound alert"
+                  onClick={() => {
+                    soundManager.playYellowPostureAlert(
+                      "Attention: Score 74 percent in yellow. Sit up straight, lift your chin, and align your spine."
+                    );
+                    setYellowAlertBanner({
+                      score: 74,
+                      message: "Score 74% (Yellow Drift): Sit up straight, lift your chin, and align your spine.",
+                      speechText: "Attention: Score 74 percent in yellow. Sit up straight, lift your chin, and align your spine.",
+                      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                    });
+                  }}
+                  className="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 text-xs font-bold shadow-md shadow-amber-500/20 transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
+                  title="Test immediate 2x pop sound and spoken audio instruction"
                 >
-                  <Volume2 className="w-3.5 h-3.5 text-brand-400" /> Test Pop Sound
+                  <Volume2 className="w-3.5 h-3.5" /> Test 2x Pop + Voice Alert
                 </button>
               </div>
             </div>
@@ -631,31 +747,41 @@ export default function DashboardPage({
               </div>
             </div>
 
-            {/* Background Tab & PiP Helper Banner */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-brand-950/60 via-slate-900/80 to-indigo-950/60 border border-brand-500/25 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xl">
+            {/* Background Tab & PiP Helper Banner with 2x Pop & Spoken Audio Instructions */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/40 via-slate-900/90 to-indigo-950/40 border border-amber-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xl">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-brand-500/20 text-brand-300 flex-shrink-0">
-                  <Sparkles className="w-5 h-5 text-brand-400" />
+                <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 flex-shrink-0">
+                  <Volume2 className="w-5 h-5 animate-pulse" />
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                    Multi-Tab Ergonomics &amp; Background Pop Alerts
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono font-semibold">
+                    Multi-Tab Ergonomics &amp; Immediate Spoken Audio Alerts
+                    <span className="px-2 py-0.5 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-mono font-semibold">
                       Active
                     </span>
                   </h4>
                   <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
-                    Work on any other website or application freely: SitSmart plays an audible <strong>double-pop alert</strong> whenever your score drops below 75%, while <strong>Floating PiP</strong> keeps your camera + skeleton lines on top of all windows.
+                    Busy on another window or tab? If your score drifts into <strong>yellow (&lt; 82%)</strong>, SitSmart immediately plays a <strong>double-pop tone (&quot;pop... pop&quot;)</strong> followed by <strong>spoken audio instructions</strong> so you hear what to do without needing to look at the screen.
                   </p>
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 <button
-                  onClick={() => soundManager.playPopSound()}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5"
-                  title="Test the pop sound alert"
+                  onClick={() => {
+                    soundManager.playYellowPostureAlert(
+                      "Attention: Score 74 percent in yellow. Sit up straight, lift your chin, and align your spine."
+                    );
+                    setYellowAlertBanner({
+                      score: 74,
+                      message: "Score 74% (Yellow Drift): Sit up straight, lift your chin, and align your spine.",
+                      speechText: "Attention: Score 74 percent in yellow. Sit up straight, lift your chin, and align your spine.",
+                      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                    });
+                  }}
+                  className="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 text-xs font-bold shadow-md shadow-amber-500/20 transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
+                  title="Test immediate 2x pop sound and spoken audio instruction"
                 >
-                  <Volume2 className="w-3.5 h-3.5 text-brand-400" /> Test Pop Sound
+                  <Volume2 className="w-3.5 h-3.5" /> Test 2x Pop + Voice Alert
                 </button>
               </div>
             </div>

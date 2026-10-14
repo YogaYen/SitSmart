@@ -26,10 +26,13 @@ class AudioAlertEngine {
 
   setMuted(muted) {
     this.isMuted = muted;
+    if (muted && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try { window.speechSynthesis.cancel(); } catch (e) {}
+    }
   }
 
-  // Crisp, punchy "double pop / ping" tone that cuts through clearly while working on other tabs/windows
-  playPopSound() {
+  // Two crisp, distinct pop sounds in immediate succession ("pop... pop!")
+  playDoublePop() {
     if (this.isMuted) return;
     try {
       this.init();
@@ -37,16 +40,16 @@ class AudioAlertEngine {
 
       const now = this.ctx.currentTime;
 
-      // Pop 1: Rapid pitch sweep (bubble pop 380Hz -> 780Hz)
+      // Pop 1: First bubble pop (400Hz -> 880Hz -> 280Hz)
       const osc1 = this.ctx.createOscillator();
       const gain1 = this.ctx.createGain();
       osc1.type = 'sine';
-      osc1.frequency.setValueAtTime(380, now);
-      osc1.frequency.exponentialRampToValueAtTime(780, now + 0.04);
-      osc1.frequency.exponentialRampToValueAtTime(260, now + 0.08);
+      osc1.frequency.setValueAtTime(400, now);
+      osc1.frequency.exponentialRampToValueAtTime(880, now + 0.035);
+      osc1.frequency.exponentialRampToValueAtTime(280, now + 0.08);
 
       gain1.gain.setValueAtTime(0.001, now);
-      gain1.gain.linearRampToValueAtTime(0.35, now + 0.015);
+      gain1.gain.linearRampToValueAtTime(0.40, now + 0.015);
       gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
 
       osc1.connect(gain1);
@@ -54,25 +57,74 @@ class AudioAlertEngine {
       osc1.start(now);
       osc1.stop(now + 0.085);
 
-      // Pop 2 (staggered 65ms later): Higher snap (520Hz -> 1150Hz)
+      // Pop 2: Second distinct pop staggered 120ms later (540Hz -> 1200Hz -> 360Hz)
+      const t2 = now + 0.12;
       const osc2 = this.ctx.createOscillator();
       const gain2 = this.ctx.createGain();
       osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(520, now + 0.065);
-      osc2.frequency.exponentialRampToValueAtTime(1150, now + 0.105);
-      osc2.frequency.exponentialRampToValueAtTime(350, now + 0.165);
+      osc2.frequency.setValueAtTime(540, t2);
+      osc2.frequency.exponentialRampToValueAtTime(1200, t2 + 0.035);
+      osc2.frequency.exponentialRampToValueAtTime(360, t2 + 0.08);
 
-      gain2.gain.setValueAtTime(0.001, now + 0.065);
-      gain2.gain.linearRampToValueAtTime(0.38, now + 0.08);
-      gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.165);
+      gain2.gain.setValueAtTime(0.001, t2);
+      gain2.gain.linearRampToValueAtTime(0.42, t2 + 0.015);
+      gain2.gain.exponentialRampToValueAtTime(0.001, t2 + 0.08);
 
       osc2.connect(gain2);
       gain2.connect(this.ctx.destination);
-      osc2.start(now + 0.065);
-      osc2.stop(now + 0.17);
+      osc2.start(t2);
+      osc2.stop(t2 + 0.085);
     } catch (e) {
-      console.warn("Audio pop chime error:", e);
+      console.warn("Audio double pop error:", e);
     }
+  }
+
+  // Alias for backward compatibility
+  playPopSound() {
+    this.playDoublePop();
+  }
+
+  // Speaks actionable audio instructions so busy users hear what to do without needing to see the screen
+  speakVoiceInstruction(text, options = {}) {
+    if (this.isMuted) return;
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+    try {
+      // Cancel any ongoing utterance to avoid queuing delays
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = options.rate || 1.02; // natural, clear cadence
+      utterance.pitch = options.pitch || 1.0;
+      utterance.volume = options.volume !== undefined ? options.volume : 1.0;
+
+      // Select an English voice if available
+      const voices = window.speechSynthesis.getVoices();
+      if (voices && voices.length > 0) {
+        const preferred = voices.find(v =>
+          v.lang.startsWith('en') &&
+          (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Samantha'))
+        );
+        if (preferred) utterance.voice = preferred;
+      }
+
+      window.speechSynthesis.speak(utterance);
+    } catch (err) {
+      console.warn("Speech synthesis error:", err);
+    }
+  }
+
+  // Plays 2 pop sounds immediately, followed by spoken audio instructions
+  playYellowPostureAlert(instructionText = "Your posture has drifted into yellow. Sit up straight, lift your chin, and align your spine.", options = {}) {
+    if (this.isMuted) return;
+
+    // 1. Immediately play pop sound two times
+    this.playDoublePop();
+
+    // 2. Play audio instructions 320ms later after the second pop finishes
+    setTimeout(() => {
+      this.speakVoiceInstruction(instructionText, options);
+    }, 320);
   }
 
   // Soft warning chime when slouching persists (>5 sec)
