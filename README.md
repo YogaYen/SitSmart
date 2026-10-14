@@ -1,9 +1,9 @@
 # SitSmart – AI Ergonomics Live Platform 🪑⚡
 > **Tagline:** *Sit Smart, Work Better*  
 > **Advancing UN SDG 3:** *Good Health & Well-being (Target 3.4)*  
-> **Live Website:** [https://shindesanika075.github.io/SitSmart/](https://shindesanika075.github.io/SitSmart/) *(or [https://yoga-yen.github.io/SitSmart/](https://yoga-yen.github.io/SitSmart/))*
+> **Live Website:** [https://yogayen.github.io/SitSmart/](https://yogayen.github.io/SitSmart/)
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-2ea44f?style=for-the-badge&logo=github)](https://shindesanika075.github.io/SitSmart/)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-2ea44f?style=for-the-badge&logo=github)](https://yogayen.github.io/SitSmart/)
 [![UN SDG 3](https://img.shields.io/badge/UN_SDG_3-Good_Health_%26_Well--being-4c9f38?style=for-the-badge)](https://sdgs.un.org/goals/goal3)
 [![MediaPipe](https://img.shields.io/badge/AI_Vision-MediaPipe_Pose_Wasm-0097a7?style=for-the-badge)](https://developers.google.com/mediapipe)
 [![React 18](https://img.shields.io/badge/Frontend-React_18_%2B_Vite-61dafb?style=for-the-badge&logo=react)](https://react.dev/)
