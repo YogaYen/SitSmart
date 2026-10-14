@@ -1,6 +1,9 @@
 # SitSmart – AI Ergonomics Live Platform
 > **Tagline:** *Sit Smart, Work Better*  
-> **Advancing UN SDG 3:** *Good Health & Well-being (Target 3.4)*
+> **Advancing UN SDG 3:** *Good Health & Well-being (Target 3.4)*  
+> **Live Site:** [https://shindesanika075.github.io/SitSmart/](https://shindesanika075.github.io/SitSmart/)
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-2ea44f?style=for-the-badge&logo=github)](https://shindesanika075.github.io/SitSmart/)
 
 SitSmart is an AI-powered ergonomics live platform that helps employees, students, remote workers, and corporate organizations reduce the physical and musculoskeletal health risks of prolonged sitting. Featuring real-time on-device computer vision posture analysis, step-by-step ergonomic workstation wizards, proactive movement alerts, and evidence-based micro-breaks, it directly supports SDG 3 by preventing spinal strain and fostering lasting workplace wellness.
 
