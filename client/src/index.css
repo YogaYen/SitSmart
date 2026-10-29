@@ -264,4 +264,15 @@
   animation: zenbot-pulse 2s ease-in-out infinite;
 }
 
+/* Human Trainer Video Motion */
+@keyframes trainer-breathe-motion {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.025) translateY(-2px); }
+}
+
+.animate-trainer-motion {
+  animation: trainer-breathe-motion 3.5s ease-in-out infinite;
+}
+
+
 

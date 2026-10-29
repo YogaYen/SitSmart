@@ -79,24 +79,23 @@ A specialized module created for college students, campus placement candidates, 
 
 ---
 
-### 4. 🧘 Multi-Character Interactive Exercise Coaches with Spoken Voice Guidance (`MicroBreakModal.jsx`, `CartoonExerciseCoach.jsx`, `audioAlerts.js`)
-* **3 Selectable Exercise Coaches (With Custom Personalities & Audio Formats):**
-  * 🧘‍♀️ **Coach Maya (Yoga & Mindfulness Guide):** Soothing, gentle pacing with deep breathing cues and mindful posture transitions.
-  * 🏋️‍♂️ **Coach Alex (Dynamic Biomechanics Trainer):** High-energy, motivating desk-athlete coaching with crisp athletic form.
-  * 🤖 **ZenBot AI (3D Biomechanical Cyborg):** Futuristic optical companion with glowing biomechanical joint angle indicators and digital telemetry.
-* **100% Spoken Voice Guidance (No Reading Required):**
-  * As each exercise begins, the chosen coach immediately speaks clear, step-by-step audio instructions out loud via Web Speech Synthesis.
-  * **Midpoint Callout:** Automatic audio cue at 50% time elapsed to remind the user to switch sides or deepen the stretch.
-  * **Completion Cheer:** Spoken celebratory encouragement upon timer completion.
-  * **Audio Equalizer Wave:** Real-time visual audio waveform indicator showing when the coach is speaking.
-  * **Controls:** Replay Voice button, quick Voice Mute/Unmute toggle, and 1-click coach switching.
-* **6 Evidence-Based Ergonomic Movements (Accurately Demonstrated in Real-Time):**
-  1. *Upper Trapezius Release (Ear-to-shoulder tilt with gentle hand counter-weight)*
-  2. *Scapular Retraction (Shoulder blade pinch and rhythmic chest expansion)*
-  3. *20-20-20 Eye Strain Reset (20-foot horizon gaze with ciliary eye reset)*
-  4. *Seated Torso Spinal Twist (Crossed-arm rotational disc lubrication)*
-  5. *Wrist & Forearm Flexor Stretch (Extended arm with gentle finger retraction)*
-  6. *Chest & Anterior Shoulder Opener (Clasped hands posterior stretch with diaphragmatic breathing)*
+### 4. 🧘 Human Exercise Trainer Video Clips with Coach Maya's Spoken Voice Guidance (`MicroBreakModal.jsx`, `CartoonExerciseCoach.jsx`, `audioAlerts.js`)
+* **Dedicated Human Exercise Trainer (Coach Maya):**
+  * Demonstrates each exercise as a high-definition human trainer video clip with real-time movement pacing and biomechanical angle overlays.
+  * Alex and ZenBot have been removed, making **Coach Maya** the focused, mindful wellness guide.
+* **100% Spoken Voice Guidance (Zero Reading Required):**
+  * When each exercise begins, Coach Maya automatically speaks out the full step-by-step instructions so users can simply watch her demonstration and listen.
+  * **Midpoint Callout:** Automatic spoken audio cue at 50% elapsed time to guide switching sides or progressing the stretch.
+  * **Completion Cheer:** Spoken audio praise celebrating the user's posture reset.
+  * **Active Audio Equalizer Wave:** Real-time visual audio waveform indicator showing when Coach Maya is speaking.
+  * **Voice Controls:** Quick Repeat Voice button and instant Voice Mute / Unmute toggle.
+* **The 6 Targeted Ergonomic Workstation Exercises:**
+  1. *Spine: Seated Torso Twist & Reach* — Torso twist with hand on opposite knee, 15s hold per side, ending in double overhead reach to decompress vertebrae.
+  2. *Shoulders: Shoulder Rolls with Blade Squeeze* — Inhale shrug up, roll backward, and firmly pinch shoulder blades together (10 backward circles).
+  3. *Eyes: The 20-20-20 Rule & Palming* — 20 seconds gazing 20 feet away, followed by 30 seconds of gentle warm palm cupping over closed eyes to relax optic nerves.
+  4. *Hands: Wrist Flexor/Extensor Stretch & Finger Spreads* — Palm out finger pull back (15s), downward extensor press (15s), followed by wide finger spreads and tight fist contractions (5 reps).
+  5. *Neck: Upper Trapezius Side Tilt & Chin Tuck* — Ear-to-shoulder side drop with subtle hand weight (20s per side), followed by 5 double-chin tuck repetitions.
+  6. *Knee: Seated Straight-Leg Extension* — Leg straightened parallel to the floor, foot flexed toward shin, quadricep contraction (3–5s hold, 10–12 reps per leg) to circulate synovial lubricating fluid.
 
 ---
 

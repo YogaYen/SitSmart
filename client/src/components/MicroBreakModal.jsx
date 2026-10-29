@@ -18,64 +18,64 @@ import CartoonExerciseCoach from './CartoonExerciseCoach';
 
 const STRETCHES = [
   {
-    id: "trapezius_release",
-    title: "Upper Trapezius Release",
-    target: "Neck & Upper Spine",
-    durationSec: 30,
-    icon: Activity,
-    color: "from-blue-500 to-indigo-500",
-    instruction: "Gently tilt right ear towards right shoulder. Place right hand over head for subtle downward pressure without pulling. Hold 15 seconds, then switch sides.",
-    benefit: "Relieves cervical nerve compression and tension headaches caused by forward head posture."
+    id: "spine_twist_reach",
+    title: "Spine: Seated Torso Twist & Reach",
+    target: "Thoracic Spine & Vertebral Discs",
+    durationSec: 35,
+    icon: HeartPulse,
+    color: "from-purple-500 to-indigo-500",
+    instruction: "Sit upright, place your right hand on your left knee, and gently twist your torso to the left while keeping your spine long. Hold for 15 seconds, switch sides, then finish by reaching both arms straight overhead to decompress your vertebrae.",
+    benefit: "Releases spinal facet joint pressure, stimulates synovial lubrication, and decompresses vertebrae."
   },
   {
-    id: "scapular_retraction",
-    title: "Scapular Retraction (Shoulder Pinch)",
-    target: "Upper Back & Rhomboids",
+    id: "shoulder_rolls_squeeze",
+    title: "Shoulders: Shoulder Rolls with Blade Squeeze",
+    target: "Upper Back, Trapezius & Rhomboids",
     durationSec: 30,
     icon: Sparkles,
     color: "from-emerald-500 to-teal-500",
-    instruction: "Sit tall with arms relaxed. Draw shoulder blades backward and downward as if squeezing a pencil between them. Hold 5s, relax, repeat 5 times.",
-    benefit: "Strengthens postural stabilizers and reverses anterior shoulder rounding."
+    instruction: "Inhale as you shrug your shoulders up toward your ears, roll them back, and squeeze your shoulder blades firmly together before lowering them down. Perform 10 backward circles to release upper-back tension.",
+    benefit: "Reverses anterior shoulder rounding from keyboard hunching and stimulates upper back circulation."
   },
   {
-    id: "rule_20_20_20",
-    title: "20-20-20 Eye Strain Reset",
-    target: "Ciliary Eye Muscles",
-    durationSec: 20,
+    id: "eyes_20_20_palming",
+    title: "Eyes: The 20-20-20 Rule & Palming",
+    target: "Ciliary Eye Muscles & Optic Nerves",
+    durationSec: 50,
     icon: Eye,
     color: "from-cyan-500 to-blue-500",
-    instruction: "Direct your vision away from the screen. Fixate on an object at least 20 feet (6 meters) away for 20 seconds. Blink smoothly 5 times.",
-    benefit: "Relaxes ciliary eye muscles, prevents screen fatigue, and resets visual depth perception."
+    instruction: "Look away from your screen at an object at least 20 feet away for 20 seconds. Then, rub your palms together until warm and gently cup them over your closed eyes (without pressing on the eyeballs) for 30 seconds to relax your optic nerves.",
+    benefit: "Relaxes fatigued ciliary lens muscles, eliminates digital blue-light strain, and soothes the optic nerve."
   },
   {
-    id: "spinal_twist",
-    title: "Seated Torso Spinal Twist",
-    target: "Thoracic & Lumbar Spine",
-    durationSec: 30,
-    icon: HeartPulse,
-    color: "from-purple-500 to-pink-500",
-    instruction: "Cross right arm over left thigh. Place left hand on chair back. Inhale to lengthen your spine, exhale to gently rotate torso. Hold 15s per side.",
-    benefit: "Stimulates spinal disc lubrication and releases lower back compression from static sitting."
-  },
-  {
-    id: "wrist_flexor",
-    title: "Wrist & Finger Flexor Stretch",
-    target: "Forearms & Carpal Tunnel",
-    durationSec: 30,
+    id: "wrist_finger_spreads",
+    title: "Hands: Wrist Flexor/Extensor Stretch & Finger Spreads",
+    target: "Wrists, Forearms & Carpal Tunnel",
+    durationSec: 45,
     icon: Activity,
     color: "from-amber-500 to-orange-500",
-    instruction: "Extend right arm forward, palm facing away and fingers pointed down. Use left hand to gently pull fingers back toward your body. Hold 15s, switch.",
-    benefit: "Reduces repetitive strain injury (RSI) risks and relieves forearm typing tightness."
+    instruction: "Extend one arm in front of you with the palm facing outward. Use your other hand to gently pull your fingers back toward your wrist for 15 seconds, then press them downward for 15 seconds. Follow by spreading your fingers as wide as possible, holding for 3 seconds, and making a tight fist (repeat 5 times).",
+    benefit: "Reduces repetitive strain injury (RSI) risks, releases forearm typing tightness, and preserves median nerve health."
   },
   {
-    id: "chest_opener",
-    title: "Chest & Anterior Shoulder Opener",
-    target: "Pectorals & Front Deltoids",
-    durationSec: 30,
-    icon: Sparkles,
+    id: "neck_tilt_chin_tuck",
+    title: "Neck: Upper Trapezius Side Tilt & Chin Tuck",
+    target: "Cervical Spine & Suboccipital Muscles",
+    durationSec: 45,
+    icon: Activity,
+    color: "from-blue-500 to-indigo-500",
+    instruction: "Sit tall and gently drop your right ear toward your right shoulder without lifting the shoulder. For a deeper stretch, place your right hand lightly on your head without pulling. Hold for 20 seconds per side, then pull your chin straight back into your neck (making a double chin) for 5 repetitions.",
+    benefit: "Relieves cervical nerve compression, eases tension headaches, and corrects forward head carriage ('text-neck')."
+  },
+  {
+    id: "knee_leg_extension",
+    title: "Knee: Seated Straight-Leg Extension",
+    target: "Quadriceps & Knee Synovial Joint Fluid",
+    durationSec: 35,
+    icon: HeartPulse,
     color: "from-teal-500 to-emerald-500",
-    instruction: "Interlace fingers behind your lower back. Roll shoulders back and gently straighten arms while lifting chest upward. Take 3 deep diaphragmatic breaths.",
-    benefit: "Reverses desk hunching and opens up lung capacity for enhanced oxygenation."
+    instruction: "Sit back firmly in your chair. Slowly straighten your right leg in front of you until parallel to the floor, flex your foot toward your shin, and contract your quadriceps for 3–5 seconds. Lower down smoothly and repeat for 10–12 reps on each leg to circulate synovial fluid and relieve stiffness.",
+    benefit: "Circulates synovial lubricating fluid, prevents sedentary knee stiffness, and activates stabilizing quadriceps."
   }
 ];
 
@@ -143,7 +143,7 @@ export default function MicroBreakModal({ isOpen, onClose }) {
             </div>
             <div>
               <h3 className="text-base font-bold text-white">Micro-Break &amp; Desk Stretch</h3>
-              <p className="text-[11px] text-slate-400">Coaches (Maya, Alex, ZenBot) with live spoken voice guidance</p>
+              <p className="text-[11px] text-slate-400">Human trainer video clip demonstrations with Coach Maya's voice</p>
             </div>
           </div>
           <button

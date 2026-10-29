@@ -105,49 +105,19 @@ class AudioAlertEngine {
       window.speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
-      const character = options.character || 'maya';
 
-      // Tailored pitch and cadence per character personality
-      let defaultRate = 1.0;
-      let defaultPitch = 1.0;
-      if (character === 'maya') {
-        defaultRate = 0.98; // gentle, reassuring yoga pacing
-        defaultPitch = 1.08; // warm, feminine melodic tone
-      } else if (character === 'alex') {
-        defaultRate = 1.05; // energetic, upbeat athletic pacing
-        defaultPitch = 0.92; // confident, lower trainer tone
-      } else if (character === 'zenbot') {
-        defaultRate = 1.02; // precise, structured digital pacing
-        defaultPitch = 1.20; // futuristic synthesizer tone
-      }
-
-      utterance.rate = options.rate || defaultRate;
-      utterance.pitch = options.pitch || defaultPitch;
+      // Coach Maya: gentle, reassuring, natural ergonomics & yoga pacing
+      utterance.rate = options.rate || 0.98;
+      utterance.pitch = options.pitch || 1.08;
       utterance.volume = options.volume !== undefined ? options.volume : 1.0;
 
-      // Select character-matched voice if available on system
+      // Select Coach Maya's female/natural English voice
       const voices = window.speechSynthesis.getVoices();
       if (voices && voices.length > 0) {
-        let preferred = null;
-        if (character === 'maya') {
-          preferred = voices.find(v =>
-            v.lang.startsWith('en') &&
-            (v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Jenny') || v.name.includes('Victoria') || v.name.includes('Female'))
-          );
-        } else if (character === 'alex') {
-          preferred = voices.find(v =>
-            v.lang.startsWith('en') &&
-            (v.name.includes('David') || v.name.includes('Guy') || v.name.includes('George') || v.name.includes('Male'))
-          );
-        } else if (character === 'zenbot') {
-          preferred = voices.find(v =>
-            v.lang.startsWith('en') &&
-            (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Microsoft'))
-          );
-        }
-        if (!preferred) {
-          preferred = voices.find(v => v.lang.startsWith('en'));
-        }
+        const preferred = voices.find(v =>
+          v.lang.startsWith('en') &&
+          (v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Jenny') || v.name.includes('Victoria') || v.name.includes('Natural') || v.name.includes('Female'))
+        ) || voices.find(v => v.lang.startsWith('en'));
         if (preferred) utterance.voice = preferred;
       }
 
