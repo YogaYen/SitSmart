@@ -79,16 +79,24 @@ A specialized module created for college students, campus placement candidates, 
 
 ---
 
-### 4. 🧘 Interactive Cartoon & 4K Human Micro-Break Exercises (`MicroBreakModal.jsx`, `CartoonExerciseCoach.jsx`, `HumanExerciseCoach.jsx`)
-* **Dual Coach Modes:** Toggle between an energetic animated character and photorealistic human demonstration.
-* **6 Evidence-Based Stretches:**
-  1. *Upper Trapezius Release*
-  2. *Scapular Retraction (Shoulder Blade Pinch)*
-  3. *20-20-20 Eye Strain Reset*
-  4. *Seated Spinal Twist*
-  5. *Wrist & Forearm Flexor Stretch*
-  6. *Chest & Anterior Shoulder Opener*
-* **Interactive Controls:** Start, Pause, Previous, Next buttons with live timer countdowns.
+### 4. 🧘 Multi-Character Interactive Exercise Coaches with Spoken Voice Guidance (`MicroBreakModal.jsx`, `CartoonExerciseCoach.jsx`, `audioAlerts.js`)
+* **3 Selectable Exercise Coaches (With Custom Personalities & Audio Formats):**
+  * 🧘‍♀️ **Coach Maya (Yoga & Mindfulness Guide):** Soothing, gentle pacing with deep breathing cues and mindful posture transitions.
+  * 🏋️‍♂️ **Coach Alex (Dynamic Biomechanics Trainer):** High-energy, motivating desk-athlete coaching with crisp athletic form.
+  * 🤖 **ZenBot AI (3D Biomechanical Cyborg):** Futuristic optical companion with glowing biomechanical joint angle indicators and digital telemetry.
+* **100% Spoken Voice Guidance (No Reading Required):**
+  * As each exercise begins, the chosen coach immediately speaks clear, step-by-step audio instructions out loud via Web Speech Synthesis.
+  * **Midpoint Callout:** Automatic audio cue at 50% time elapsed to remind the user to switch sides or deepen the stretch.
+  * **Completion Cheer:** Spoken celebratory encouragement upon timer completion.
+  * **Audio Equalizer Wave:** Real-time visual audio waveform indicator showing when the coach is speaking.
+  * **Controls:** Replay Voice button, quick Voice Mute/Unmute toggle, and 1-click coach switching.
+* **6 Evidence-Based Ergonomic Movements (Accurately Demonstrated in Real-Time):**
+  1. *Upper Trapezius Release (Ear-to-shoulder tilt with gentle hand counter-weight)*
+  2. *Scapular Retraction (Shoulder blade pinch and rhythmic chest expansion)*
+  3. *20-20-20 Eye Strain Reset (20-foot horizon gaze with ciliary eye reset)*
+  4. *Seated Torso Spinal Twist (Crossed-arm rotational disc lubrication)*
+  5. *Wrist & Forearm Flexor Stretch (Extended arm with gentle finger retraction)*
+  6. *Chest & Anterior Shoulder Opener (Clasped hands posterior stretch with diaphragmatic breathing)*
 
 ---
 

@@ -102,8 +102,23 @@ export default function MicroBreakModal({ isOpen, onClose }) {
     return () => clearInterval(interval);
   }, [isActive, secondsLeft]);
 
+  // Stop speech when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      soundManager.stopSpeaking();
+      setIsActive(false);
+    }
+  }, [isOpen]);
+
+  const handleClose = () => {
+    soundManager.stopSpeaking();
+    setIsActive(false);
+    onClose();
+  };
+
   // Reset when changing stretch
   const switchStretch = (index) => {
+    soundManager.stopSpeaking();
     setCurrentIndex(index);
     setSecondsLeft(STRETCHES[index].durationSec);
     setIsActive(false);
@@ -128,11 +143,11 @@ export default function MicroBreakModal({ isOpen, onClose }) {
             </div>
             <div>
               <h3 className="text-base font-bold text-white">Micro-Break &amp; Desk Stretch</h3>
-              <p className="text-[11px] text-slate-400">Animated cartoon coach demonstrates every exercise</p>
+              <p className="text-[11px] text-slate-400">Coaches (Maya, Alex, ZenBot) with live spoken voice guidance</p>
             </div>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -178,7 +193,9 @@ export default function MicroBreakModal({ isOpen, onClose }) {
                 stretchId={currentStretch.id}
                 isActive={isActive}
                 secondsLeft={secondsLeft}
+                totalDuration={currentStretch.durationSec}
                 instruction={currentStretch.instruction}
+                stretchTitle={currentStretch.title}
               />
             </div>
 
@@ -254,7 +271,10 @@ export default function MicroBreakModal({ isOpen, onClose }) {
               {/* START / PAUSE / RESUME BUTTON */}
               {isActive ? (
                 <button
-                  onClick={() => setIsActive(false)}
+                  onClick={() => {
+                    soundManager.stopSpeaking();
+                    setIsActive(false);
+                  }}
                   className="flex-[1.4] px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xs sm:text-sm shadow-lg shadow-amber-500/25 transition-all cursor-pointer flex items-center justify-center gap-2 transform active:scale-95"
                 >
                   <Pause className="w-4 h-4 sm:w-5 sm:h-5 fill-current shrink-0" />
@@ -280,7 +300,7 @@ export default function MicroBreakModal({ isOpen, onClose }) {
                   if (currentIndex < STRETCHES.length - 1) {
                     switchStretch(currentIndex + 1);
                   } else {
-                    onClose();
+                    handleClose();
                   }
                 }}
                 className={`flex-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border transition-all font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 shadow-sm cursor-pointer ${
@@ -301,6 +321,7 @@ export default function MicroBreakModal({ isOpen, onClose }) {
               {/* RESET TIMER BUTTON */}
               <button
                 onClick={() => {
+                  soundManager.stopSpeaking();
                   setSecondsLeft(currentStretch.durationSec);
                   setIsActive(false);
                   setCompleted(false);

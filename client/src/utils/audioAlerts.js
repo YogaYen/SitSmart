@@ -84,6 +84,17 @@ class AudioAlertEngine {
     this.playDoublePop();
   }
 
+  // Cancels any ongoing spoken audio immediately
+  stopSpeaking() {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel();
+      } catch (e) {
+        console.warn("Speech cancel error:", e);
+      }
+    }
+  }
+
   // Speaks actionable audio instructions so busy users hear what to do without needing to see the screen
   speakVoiceInstruction(text, options = {}) {
     if (this.isMuted) return;
@@ -94,19 +105,55 @@ class AudioAlertEngine {
       window.speechSynthesis.cancel();
 
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = options.rate || 1.02; // natural, clear cadence
-      utterance.pitch = options.pitch || 1.0;
+      const character = options.character || 'maya';
+
+      // Tailored pitch and cadence per character personality
+      let defaultRate = 1.0;
+      let defaultPitch = 1.0;
+      if (character === 'maya') {
+        defaultRate = 0.98; // gentle, reassuring yoga pacing
+        defaultPitch = 1.08; // warm, feminine melodic tone
+      } else if (character === 'alex') {
+        defaultRate = 1.05; // energetic, upbeat athletic pacing
+        defaultPitch = 0.92; // confident, lower trainer tone
+      } else if (character === 'zenbot') {
+        defaultRate = 1.02; // precise, structured digital pacing
+        defaultPitch = 1.20; // futuristic synthesizer tone
+      }
+
+      utterance.rate = options.rate || defaultRate;
+      utterance.pitch = options.pitch || defaultPitch;
       utterance.volume = options.volume !== undefined ? options.volume : 1.0;
 
-      // Select an English voice if available
+      // Select character-matched voice if available on system
       const voices = window.speechSynthesis.getVoices();
       if (voices && voices.length > 0) {
-        const preferred = voices.find(v =>
-          v.lang.startsWith('en') &&
-          (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Samantha'))
-        );
+        let preferred = null;
+        if (character === 'maya') {
+          preferred = voices.find(v =>
+            v.lang.startsWith('en') &&
+            (v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('Jenny') || v.name.includes('Victoria') || v.name.includes('Female'))
+          );
+        } else if (character === 'alex') {
+          preferred = voices.find(v =>
+            v.lang.startsWith('en') &&
+            (v.name.includes('David') || v.name.includes('Guy') || v.name.includes('George') || v.name.includes('Male'))
+          );
+        } else if (character === 'zenbot') {
+          preferred = voices.find(v =>
+            v.lang.startsWith('en') &&
+            (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Microsoft'))
+          );
+        }
+        if (!preferred) {
+          preferred = voices.find(v => v.lang.startsWith('en'));
+        }
         if (preferred) utterance.voice = preferred;
       }
+
+      if (options.onStart) utterance.onstart = options.onStart;
+      if (options.onEnd) utterance.onend = options.onEnd;
+      if (options.onError) utterance.onerror = options.onError;
 
       window.speechSynthesis.speak(utterance);
     } catch (err) {

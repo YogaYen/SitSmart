@@ -235,3 +235,33 @@
   animation: cartoon-ripple-expand 2.5s ease-in-out infinite;
 }
 
+/* Voice Coach Audio Wave Indicator */
+@keyframes audio-wave {
+  0%, 100% { height: 4px; }
+  50% { height: 16px; }
+}
+
+.animate-audio-wave-1 {
+  animation: audio-wave 0.7s ease-in-out infinite;
+}
+.animate-audio-wave-2 {
+  animation: audio-wave 0.7s ease-in-out 0.2s infinite;
+}
+.animate-audio-wave-3 {
+  animation: audio-wave 0.7s ease-in-out 0.4s infinite;
+}
+.animate-audio-wave-4 {
+  animation: audio-wave 0.7s ease-in-out 0.15s infinite;
+}
+
+/* ZenBot Futuristic Joint Glow */
+@keyframes zenbot-pulse {
+  0%, 100% { filter: drop-shadow(0 0 2px #06b6d4) drop-shadow(0 0 6px #06b6d4); }
+  50% { filter: drop-shadow(0 0 5px #38bdf8) drop-shadow(0 0 12px #38bdf8); }
+}
+
+.animate-zenbot-glow {
+  animation: zenbot-pulse 2s ease-in-out infinite;
+}
+
+
