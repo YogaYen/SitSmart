@@ -9,10 +9,11 @@ export default function HumanExerciseCoach({
 }) {
   const [showFullText, setShowFullText] = useState(false);
 
+  const base = import.meta.env.BASE_URL || '/';
   // 4K Human Coach Data & Enthusiastic Voice Prompts
   const coachData = {
     trapezius_release: {
-      image: "/exercises/trapezius_release.jpg",
+      image: `${base}exercises/trapezius_release.jpg`,
       coachName: "Coach Maya",
       role: "Lead Ergonomics & Movement Trainer",
       action: "Upper Trapezius Release",
@@ -26,7 +27,7 @@ export default function HumanExerciseCoach({
       energyTag: "Release & Refresh 🔥"
     },
     scapular_retraction: {
-      image: "/exercises/scapular_retraction.jpg",
+      image: `${base}exercises/scapular_retraction.jpg`,
       coachName: "Coach Maya",
       role: "Lead Ergonomics & Movement Trainer",
       action: "Scapular Retraction Pinch",
@@ -40,7 +41,7 @@ export default function HumanExerciseCoach({
       energyTag: "Power Up Your Spine ⚡"
     },
     rule_20_20_20: {
-      image: "/exercises/rule_20_20_20.jpg",
+      image: `${base}exercises/rule_20_20_20.jpg`,
       coachName: "Coach Maya",
       role: "Lead Ergonomics & Movement Trainer",
       action: "20-20-20 Eye Strain Reset",
@@ -54,7 +55,7 @@ export default function HumanExerciseCoach({
       energyTag: "Visual Reset 👁️"
     },
     spinal_twist: {
-      image: "/exercises/spinal_twist.jpg",
+      image: `${base}exercises/spinal_twist.jpg`,
       coachName: "Coach Maya",
       role: "Lead Ergonomics & Movement Trainer",
       action: "Seated Torso Spinal Twist",
@@ -68,7 +69,7 @@ export default function HumanExerciseCoach({
       energyTag: "Spinal Mobility 🌀"
     },
     wrist_flexor: {
-      image: "/exercises/wrist_flexor.jpg",
+      image: `${base}exercises/wrist_flexor.jpg`,
       coachName: "Coach Maya",
       role: "Lead Ergonomics & Movement Trainer",
       action: "Wrist & Finger Flexor Stretch",
@@ -82,7 +83,7 @@ export default function HumanExerciseCoach({
       energyTag: "Anti-RSI Protection ✋"
     },
     chest_opener: {
-      image: "/exercises/chest_opener.jpg",
+      image: `${base}exercises/chest_opener.jpg`,
       coachName: "Coach Maya",
       role: "Lead Ergonomics & Movement Trainer",
       action: "Chest & Anterior Shoulder Opener",

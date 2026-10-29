@@ -37,6 +37,9 @@ jobs:
         working-directory: ./client
         run: npm run build
 
+      - name: Create 404.html fallback for GitHub Pages SPA
+        run: cp client/dist/index.html client/dist/404.html
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
